@@ -1,0 +1,1156 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart Testing</title>
+  <script type="text/javascript">
+    /*Required setup variables*/
+    var clientPath = "johnstonegrimme"; //Replace this with the client folder name from https://www.mmcwebthing.com/Cart/
+    var subscriptionKey = "3ad25baa74fb444ea87ca67092b77591";//API Key provided by development team
+    var clientID = "98D9CB9D-9299-4075-8CC1-A3491AB1ADC1"; //Client ID provided by development team
+    var catalogCode = "DEF"; //Catalog code, can be found within Igenuix (DEC) if the client exists with a fulfillment, otherwise provided on handoff
+
+    var sourceClientIdentifier = "1084"; //Client ID, provided on handoff
+    var sourcePackageCode = "JSG_Default_Fulfillment"; //Direct Mail package code, provided on handoff or on DEC for an existing client with fulfillment
+    var sourceOrderIdentifier = "a48a1205-618a-4618-94ab-d5ff030f115c"; //Must generate a new GUID, can find a generator online
+    var shippingCarrierIdentifier = null;
+    var shippingMethodIdentifier = null;
+
+
+	/* Customization Options */
+    var orderDetailsText = "+ See Product Details";
+    var addToCartButtonText = "Add to cart";
+    var defaultImage = "https://www.mmcwebthing.com/Cart/goodman/noimage.jpg";
+    var productsPerPageText = "products per page";
+    var cartText = "Cart Items";
+    var cartHeaderText = "YOUR CART";
+    var cartDescriptionText = "Please review your cart items."
+    var cartButtonText = "Checkout";
+    var showProductImages = true;
+    var orderCapReachedText = "Order cap reached for this item";
+    var cartEmptyText = "Your cart it empty, please add an item to continue";
+
+    var currentDate = new Date();
+
+    /*=====================================*/
+  </script>
+  <!--This scipt is to use the Google Recaptcha-->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script>
+    function recaptcha_callback() {
+      $('.button').prop("disabled", false);
+    }
+  </script>
+  <!--This is where the exported code from RedPoint starts-->
+  <!--Copy in the Scripts and Stylesheets code from the View HTML exported code from RedPoint -->
+  <!-- Scripts and Stylesheets -->
+  <script type="text/javascript"
+    src="https://mmctrainingjs.azureedge.net/RPIFormValidation/shared/js/rpiwebclient/rpiWebClient.config.js"></script>
+  <script type="text/javascript"
+    src="https://mmctrainingjs.azureedge.net/RPIFormValidation/shared/js/rpiwebclient/rpiWebClient-6.2.js"></script>
+  <link href="https://mmctrainingjs.azureedge.net/RPIFormValidation/shared/css/validation.css" rel="stylesheet"
+    type="text/css" />
+  <script type="text/javascript"
+    src="https://mmctrainingjs.azureedge.net/RPIFormValidation/shared/js/jquery-1.11.0.min.js"></script>
+  <script type="text/javascript"
+    src="https://mmctrainingjs.azureedge.net/RPIFormValidation/shared/js/modernizr.com/modernizr-2.7.1.min.js"></script>
+  <script type="text/javascript"
+    src="https://mmctrainingjs.azureedge.net/RPIFormValidation/shared/js/js-webshim/minified/polyfiller.js"></script>
+  <script type="text/javascript">webshims.polyfill();</script>
+  <!--Need to add in this script for the google recaptcha to work. Need to paste in here in this order so no errors-->
+  <script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <style>
+    .rpiformdiv {
+      font: 14px/16px "Segoe UI", "Verdana", "Arial", sans-serif;
+    }
+
+    .rpi_contact_form h2,
+    .rpi_contact_form label,
+    .rpi_contact_form textarea,
+    .rpi_contact_form select {
+      font-family: "Segoe UI", "Verdana", "Arial", sans-serif;
+    }
+  </style>
+  <script type="text/javascript">
+    function formRequest(form) {
+      if (form == 'FulfillmentWebForm') {
+        var val = document.forms["FulfillmentWebForm"]["contact_firstname"].value;
+        if (val != undefined && val != null && val != "") {
+          rpiWebClient._cacheDBData('6f988f10-9629-4a5b-ba36-1561aeddc481', val);
+        }
+      }
+      return true;
+    }
+  </script>
+  <script type="text/javascript"
+    src="https://mmcjsgcreative.blob.core.windows.net/jsfiles/Fulfillment/cart.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      Cart.initJQuery();
+      Cart.currency = '$';
+    });
+  </script>
+  <style>
+    .fulfillment-wrapper {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      overflow-x: hidden !important;
+    }
+
+    .fulfillment-container {
+      width: 100%;
+      padding: 0;
+      min-height: 495px;
+      box-sizing: border-box;
+      max-width: 96%;
+      margin: 0 auto;
+    }
+
+    .fulfillment-footer {
+      width: 100%;
+    }
+
+    .step-container {
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .fulfillment-alignmnet-wrapper {
+      width: 100%;
+    }
+
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: baseline
+	 
+    }
+
+    .fulfillment-item.flex-container {
+      flex-wrap: nowrap;
+    }
+
+    .fulfillment-item {
+      width: 308px;
+      height: 150px;
+      margin-bottom: 15px;
+	  position: relative;
+    }
+	
+	.item-button-container{
+		position:absolute;
+		bottom: 0;
+	}
+
+    .fulfillment-item img {
+      width: 100%;
+      border: 1px solid #d6d6d6;
+      padding: 15px 0px;
+      background-color: #fff;
+	  margin-top: 15px;
+    }
+
+    .checkout-container {
+      display: inline-block;
+      margin: 15px auto;
+      float: right;
+    }
+
+    .cart-items {
+      padding: 0 15px;
+    }
+
+    .cart-items p {
+      display: inline-block;
+      margin-right: 15px;
+    }
+
+    .checkout-button {
+      background-color: #000;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      border: none;
+      display: block;
+      border-radius: 0;
+      height: 35px;
+      padding: 0 15px;
+      display: inline-block;
+    }
+
+    .checkout-button:hover {
+      cursor: pointer;
+      background-color: #424242 !important;
+    }
+
+    .image-section {
+      width: 102px;
+      margin-right: 15px;
+      margin-bottom: 15px;
+    }
+
+    .content-section {
+      width: 307px;
+    }
+
+    .order-details {
+      display: inline-block;
+      color: #ff0000;
+      padding: 5px 0 15px;
+    }
+
+    .order-details:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .catalog-item-title {
+      font-size: 16px;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
+      font-weight: bold;
+      padding-right: 5px;
+    }
+
+    .content-section {
+      padding: 15px 0;
+    }
+
+    .content-section button {
+      background-color: #000;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      border: none;
+      display: inline-block;
+      border-radius: 0;
+      height: 35px;
+      padding: 0 15px;
+      margin-right: 15px;
+    }
+
+    .quantity-select {
+      display: inline-block;
+      height: 35px;
+      width: 50px;
+      box-sizing: border-box;
+    }
+
+    .content-section button:hover {
+      cursor: pointer;
+      background-color: #424242 !important;
+    }
+
+    .productDescriptionLightbox {
+      display: none;
+      position: fixed;
+      top: -20%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .productFlexWrapper {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      align-items: center;
+    }
+
+    .productDescriptionContainer {
+      background-color: #fff;
+      max-width: 532px;
+      width: 100%;
+      min-height: 250px;
+      margin: auto;
+      padding-bottom: 30px;
+    }
+
+    .productImage {
+      width: 200px;
+      display: flex;
+      border-right: 1px solid #fff;
+    }
+
+    .productImage img {
+      width: 80%;
+      margin: 0 auto;
+      min-height: 178px;
+    }
+
+    .productContent {
+      width: 330px;
+    }
+
+    .descriptionContent {
+      padding: 0 15px 15px;
+      width: 100%;
+      box-sizing: border-box;
+      height: 100%;
+    }
+
+    .buttonHeader {
+      width: 100%;
+      position: relative;
+      margin-bottom: 15px;
+      height: 38px;
+    }
+
+    .buttonHeader button {
+      border: none;
+      outline: none;
+      display: block;
+      height: 100%;
+      padding: 0 15px;
+      background-color: #000;
+      color: #fff;
+      position: absolute;
+      right: -1px;
+    }
+
+    .buttonHeader button:hover {
+      cursor: pointer;
+      background-color: #424242 !important;
+    }
+
+    .productContent .productTitle {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 0;
+    }
+
+    .cart-result-container {
+      overflow-y: auto;
+      height: 100%;
+      width: auto;
+    }
+
+    .cart-line-items img {
+      max-width: 80px;
+      background-color: #fff;
+    }
+
+    .form-container {
+      margin-right: 50px;
+      width: 475px;
+    }
+
+    .form-container ul li input:not([type=radio]),
+    .form-container ul li select {
+      height: 32px;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 5px;
+    }
+
+    .form-container ul li {
+      display: inline-block;
+      padding-right: 30px;
+      margin-bottom: 15px;
+	  width: 175px;
+    }
+	
+	
+
+    .rpiformdiv {
+      width: 100% !important;
+    }
+
+    .last-form-field {
+      display: block !important;
+    }
+
+    .cart-line-items .cart-add {
+      border: none;
+      outline: none;
+      background-color: #000;
+      color: #fff;
+      height: 25px;
+      width: 25px;
+      text-align: center;
+    }
+
+    .cart-quantity-text {
+      display: inline-block;
+      margin: 0 5px;
+    }
+
+    .cart-title-label {
+      display: inline-block;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0 0 5px;
+    }
+
+    .cart-header {
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 15px;
+      padding: 15px;
+    }
+
+    .cart-wrapper {
+      width: 470px;
+      margin-right: 50px;
+      margin-bottom: 60px;
+    }
+
+    .form-header {
+      margin-bottom: 15px;
+      padding: 15px;
+    }
+
+    .subheader {
+      color: #ff0000;
+      font-size: 18px;
+      display: inline-block;
+      padding-bottom: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .rpiformdiv ul {
+      padding-left: 15px;
+    }
+
+    .remove-btn {
+      width: auto !important;
+      margin-right: 15px;
+      text-align: center;
+      padding: 0 15px;
+    }
+
+    .back-button,
+    .form-container input[type="submit"] {
+      background-color: #000;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      border: none;
+      display: block;
+      border-radius: 0;
+      height: 35px;
+      padding: 0 15px;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .form-container input[type="submit"] {
+      max-width: 153px;
+      height: 40px !important;
+    }
+
+    .back-button:hover,
+    .form-container input[type="submit"]:hover {
+      cursor: pointer;
+      background-color: #424242 !important;
+    }
+
+    .form-container input[type="submit"]:disabled {
+      cursor: default !important;
+      background-color: #b2b2b2 !important;
+      color: #e2e2e2;
+    }
+
+    p {
+      font-size: 16px;
+    }
+
+    .how-to-order ul {}
+
+    .how-to-order {
+      margin: 0 auto;
+      padding-left: 15px;
+      padding-right: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .how-to-order .subheader {
+      font-size: 24px !important;
+    }
+
+    .how-to-order p {
+      margin-bottom: 0;
+    }
+
+    .how-to-order ol {
+      margin-top: 0;
+    }
+
+    .how-to-order li {
+      color: #ff0000;
+    }
+
+    .how-to-order li span {
+      color: #000;
+    }
+
+    .checkout-flex-container {
+      width: 100%;
+      margin: 0 auto;
+      justify-content: center;
+    }
+
+    .pagination-container {
+      display: inline-block;
+    }
+
+    .active-page {
+      background-color: #000 !important;
+      color: #fff !important;
+    }
+
+    .pagination-container .pagination-buttons {
+      list-style-type: none;
+      padding-left: 30px;
+      display: inline-block;
+      margin-right: 30px;
+    }
+
+    .pagination-container .pagination-buttons li {
+      display: inline-block;
+      height: 35px;
+      width: 35px;
+      border: 1px solid #ccc;
+      text-align: center;
+      line-height: 35px;
+      background-color: #fff;
+      color: #000;
+      margin: 0;
+    }
+
+    .pagination-container .pagination-buttons li:hover {
+      cursor: pointer;
+      filter: brightness(.95);
+    }
+
+    .pagination-container .pagination-buttons li:first-child {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+
+    .pagination-container .pagination-buttons li:last-child {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    .items-per-page {
+      display: inline-block;
+      height: 35px;
+      border-radius: 5px;
+      padding: 0 5px;
+      margin-right: 5px;
+    }
+
+    .products-per-page {
+      font-size: 16px;
+    }
+
+    .search-container {
+      width: 100%;
+    }
+
+    .search-bar,
+    .search-bar:active,
+    .search-bar:focus {
+      width: 100%;
+      height: 35px;
+      display: inline-block;
+      margin-bottom: 0px;
+      margin-top: 0px;
+      background-color: #fff;
+      border: 1px solid #000;
+      outline: none;
+      vertical-align: middle;
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+      padding-right: 25px;
+    }
+
+    .search-bar:hover {
+      cursor: pointer;
+    }
+
+    .back {
+      float: left !important;
+    }
+
+    .search-bar::after {
+      content: "\25BC";
+      float: right;
+      height: 35px;
+      width: 35px;
+      border-left: 1px solid #000;
+      line-height: 38px;
+      position: absolute;
+      color: #ccc;
+      font-size: 14px;
+      top: -1px;
+      right: 0;
+      background-color: #fff;
+      text-align: center;
+    }
+
+    .search-button {
+      margin: 0;
+      border: none;
+      outline: none;
+      height: 35px;
+      padding: 0 15px;
+      background-color: #000;
+      color: #fff;
+      display: inline-block;
+      font-size: 16px;
+      float: right;
+      margin-top: 15px;
+    }
+
+    .clear-button {
+      margin: 0;
+      border: none;
+      outline: none;
+      height: 35px;
+      padding: 0 15px;
+      background-color: #000;
+      color: #fff;
+      display: inline-block;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
+    .search-footer .search-button {
+      margin-top: 15px;
+      float: none !important;
+    }
+
+    .search-footer {
+      text-align: center;
+    }
+
+    .search-wrapper {
+      max-width: 90%;
+      width: 100%;
+      display: inline-block;
+      position: relative;
+    }
+
+    .search-button:hover {
+      cursor: pointer;
+      background-color: #424242 !important;
+    }
+
+    .search-dropdown {
+      position: absolute;
+      top: 35px;
+      box-sizing: border-box;
+      width: 100%;
+      border: 1px solid #ccc;
+      display: none;
+    }
+
+    .search-body {
+      background-color: #fff;
+      padding: 15px;
+    }
+
+    .check-option {
+      white-space: nowrap;
+      display: inline-block;
+      margin-right: 15px;
+    }
+
+    .check-option input {
+      margin-right: 5px;
+      vertical-align: bottom;
+    }
+
+    @media only screen and (max-width: 439px) {
+
+      .image-section,
+      .content-section {
+        width: 284px !important;
+        margin: 0 auto;
+      }
+
+      .fulfillment-item.flex-container {
+        flex-wrap: wrap !important;
+      }
+
+      .fulfillment-item img {
+        max-width: 100% !important;
+      }
+
+      .fulfillment-item {
+        height: 100% !important;
+        width: 100% !important;
+        margin-bottom: 30px !important;
+        margin-left: 0px !important;
+      }
+
+      .content-section {
+        width: 284px !important;
+        padding: 0 !important;
+      }
+
+      .checkout-button {
+        margin-bottom: 15px;
+      }
+
+      .form-container {
+        width: 100% !important;
+        margin-right: 0px !important;
+      }
+
+      .how-to-order {
+        padding-left: 10px !important;
+      }
+
+      .check-option {
+        min-width: 50% !important;
+      }
+    }
+
+    @media only screen and (max-width: 531px) {
+      .productImage {
+        border-right: 1px solid white !important;
+        width: 100%;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+      }
+
+      .productContent {
+        width: 100%;
+      }
+
+      .pagination-container .pagination-buttons {
+        padding-left: 10px !important;
+      }
+
+      .productImage img {
+        width: 50% !important;
+        margin: 0 auto;
+      }
+
+      .fulfillment-container {
+        height: 100% !important;
+      }
+
+      .productDescriptionContainer {
+        margin: 15px !important;
+      }
+    }
+
+    @media only screen and (max-width: 868px) {
+
+      .image-section,
+      .content-section {
+        width: 284px !important;
+        margin: 0 auto;
+      }
+
+      .fulfillment-item.flex-container {
+        flex-wrap: wrap !important;
+      }
+
+      .fulfillment-item img {
+        max-width: 100% !important;
+      }
+
+      .fulfillment-item {
+        height: 100% !important;
+        width: 100% !important;
+        margin-bottom: 30px !important;
+        margin-right: 0px !important;
+      }
+
+      .content-section {
+        width: 284px !important;
+        padding: 0 !important;
+      }
+
+      .fulfillment-item {
+        align-items: center;
+        width: 100%;
+      }
+
+      .search-button {
+        float: initial !important;
+      }
+    }
+
+    @media only screen and (max-width: 1337px) {
+
+      .search-container,
+      .search-bar {
+        width: 100% !important;
+      }
+
+      .search-bar {
+        margin-right: 0px !important;
+      }
+
+      .search-wrapper {
+        max-width: 100% !important;
+      }
+
+      .search-container .search-button {
+        float: none !important;
+        margin-top: 0px !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="step-display">
+  </div>
+  <div class="step-container" data-step="1">
+    <div class="fulfillment-wrapper">
+      <div class="fulfillment-header">
+        <div class="order-process-step">
+        </div>
+        <div class="how-to-order">
+          <!--<p>
+                     <span class="subheader">How To Order</span>
+                     </p>
+                     <ol>
+                     <li><span>Select a category to filter brochure type and click SEARCH (all categories are initially selected by default)</span></li>
+                     <li><span>Select quantity of each brochure you would like to order and select “ADD TO CART"</span></li>
+                     <li><span>Continue to CHECKOUT and enter your shipping information <b>(Reminder: all orders are free; you will not be charged for your order or for shipping)</b></span></li>
+                     </ol>-->
+          <div class="search-container">
+            <div class="search-wrapper">
+              <button onclick="onSearchBarClicked(event)" class="search-bar"></button>
+              <div class="search-dropdown">
+                <div class="search-body">
+                  <div class="search-options">
+                  </div>
+                  <!--<button class="clear-button" onclick="clearAllSearchOptions()">Clear</button>-->
+                  <div class="search-footer">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="checkout-container">
+          <div class="cart-items">
+            <p><span class="carItemText">Cart Items</span> (<span class="cart-items-count">0</span>)</p>
+            <button onclick="nextStep()" class="checkout-button">
+              Checkout</a>
+          </div>
+        </div>
+      </div>
+      <div class="fulfillment-alignmnet-wrapper">
+        <div class="fulfillment-container flex-container">
+        </div>
+      </div>
+      <div class="fulfillment-footer">
+        <div class="pagination-container">
+          <ul class="pagination-buttons">
+          </ul>
+          <select class="items-per-page" onchange="onProductsPerPageChanged(this)">
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+          </select> <span class="products-per-page">products per page</span>
+        </div>
+        <div class="checkout-container">
+          <div class="cart-items">
+            <p>Cart Items (<span class="cart-items-count">0</span>)</p> <button onclick="nextStep()"
+              class="checkout-button">Checkout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--- Add the form within the form-container divs -->
+  <div class="step-container" data-step="2" style="display:none;">
+    <div class="checkout-container back">
+      <button onclick="previousStep()" class="back-button">Back</button>
+    </div>
+    <div class="checkout-flex-container flex-container">
+      <div class="cart-wrapper">
+        <p class="cart-header">
+          <span class="subheader">YOUR CART</span><br>
+          <span class="cart-description-content">Please review your cart items.</span>
+        </p>
+        <div class="cart-result-container">
+          <table class='cart-table'>
+            <thead>
+            </thead>
+            <tbody class='cart-line-items'>
+            </tbody>
+            <tfoot>
+            </tfoot>
+          </table>
+          <p class='cart-is-empty'>Your cart is empty.</p>
+        </div>
+      </div>
+      <div class="form-container">
+		<!-- Replace Form Here -->
+	  
+        <!-- Form HTML Start-->
+        <div class="rpiformdiv">
+          <form class="rpi_contact_form" id="FulfillmentWebForm" name="FulfillmentWebForm"
+            action="https://mmcjsgrpiapi.azurewebsites.net/api/FormData" onsubmit="formRequest('FulfillmentWebForm')"
+            method="post" target="_parent">
+            <input type="hidden" id="rpiID" name="rpiID" title="" value="a9fbeb2f-8570-4129-bdd3-485efe1bb6e8" />
+            <input type="hidden" id="rpiRedirect" name="rpiRedirect" title=""
+              value="https://www.go.johnstonesolutions.com/fulfillment-thankyou" />
+            <input type="hidden" id="rpiFormID" name="rpiFormID" title="" value="FulfillmentWebForm" />
+            <input type="hidden" id="rpiEmail" name="rpiEmail" title="" value="contact_emailaddress1" />
+            <input type="hidden" id="rpiCID" name="rpiCID" title="rpiCID" />
+            <input type="hidden" id="rpiExID" name="rpiExID" title="rpiExID" />
+            <input type="hidden" id="contact_phone1_type" name="contact_phone1_type" title="Hidden" value="business" />
+            <input type="hidden" id="contact_emailaddress1_type" name="contact_emailaddress1_type" title="Hidden 2"
+              value="business" />
+            <input type="hidden" id="rpiVisitorID" name="rpiVisitorID" title="rpiVisitorID" value="" />
+            <input type="hidden" id="rpiDeviceID" name="rpiDeviceID" title="rpiDeviceID" value="" />
+            <input type="hidden" id="rpiImpID" name="rpiImpID" title="rpiImpID" value="" />
+            <input type="hidden" id="rpiCLID" name="rpiCLID" title="rpiCLID"
+              value="d1873b44-b93b-445f-abc8-2858dcf6cd62" />
+            <input type="hidden" id="rpiPagePublishID" name="rpiPagePublishID" title="rpiPagePublishID" value="0" />
+			<h2>Shipping Information</h2><span class="required_notification">*Required</span>
+				<div class="rpi_static">
+                  <p>Please provide your shipping information below. (* = Required)
+                    Items cannot be shipped outside the US and Canada.</p>
+                </div>
+            <ul style="list-style: none;">
+                
+              <li>
+                <br />
+                <label class="rpi_longlabel" for="contact_firstname">First Name *</label><br />
+                <input type="text" id="contact_firstname" name="contact_firstname" title="First Name" maxlength="25"
+                  required placeholder="First Name" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_lastname">Last Name</label><br />
+                <input type="text" id="contact_lastname" name="contact_lastname" title="Last Name" maxlength="35"
+                  placeholder="Last Name" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="company_companyname">Business Name *</label><br />
+                <input type="text" id="company_companyname" name="company_companyname" title="Business Name"
+                  maxlength="100" required placeholder="Business Name" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_addresscountrycode">Country *</label><br />
+                <select id="contact_addresscountrycode" name="contact_addresscountrycode" title="Country" required>
+                  <option value="" disabled selected>Country</option>
+                  <option value="USA">United States</option>
+                  <option value="CAN">Canada</option>
+                </select>
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_address1">Address 1 *</label><br />
+                <input type="text" id="contact_address1" name="contact_address1" title="Street" maxlength="50" required
+                  placeholder="Address 1" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_address2">Address 2</label><br />
+                <input type="text" id="contact_address2" name="contact_address2" title="Address 2" maxlength="50"
+                  placeholder="Address 2" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$|^$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_city">City *</label><br />
+                <input type="text" id="contact_city" name="contact_city" title="City" maxlength="35" required
+                  placeholder="City" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_state">State *</label><br />
+                <select id="contact_state" name="contact_state" title="State" required>
+                  <option value="" disabled selected>State</option>
+                  <option value="AL">AL</option>
+                  <option value="AK">AK</option>
+                  <option value="AZ">AZ</option>
+                  <option value="AR">AR</option>
+                  <option value="CA">CA</option>
+                  <option value="CO">CO</option>
+                  <option value="CT">CT</option>
+                  <option value="DE">DE</option>
+                  <option value="FL">FL</option>
+                  <option value="GA">GA</option>
+                  <option value="HI">HI</option>
+                  <option value="ID">ID</option>
+                  <option value="IL">IL</option>
+                  <option value="IN">IN</option>
+                  <option value="IA">IA</option>
+                  <option value="KS">KS</option>
+                  <option value="KY">KY</option>
+                  <option value="LA">LA</option>
+                  <option value="ME">ME</option>
+                  <option value="MD">MD</option>
+                  <option value="MA">MA</option>
+                  <option value="MI">MI</option>
+                  <option value="MN">MN</option>
+                  <option value="MS">MS</option>
+                  <option value="MO">MO</option>
+                  <option value="MT">MT</option>
+                  <option value="NE">NE</option>
+                  <option value="NV">NV</option>
+                  <option value="NH">NH</option>
+                  <option value="NJ">NJ</option>
+                  <option value="NM">NM</option>
+                  <option value="NY">NY</option>
+                  <option value="NC">NC</option>
+                  <option value="ND">ND</option>
+                  <option value="OH">OH</option>
+                  <option value="OK">OK</option>
+                  <option value="OR">OR</option>
+                  <option value="PA">PA</option>
+                  <option value="RI">RI</option>
+                  <option value="SC">SC</option>
+                  <option value="SD">SD</option>
+                  <option value="TN">TN</option>
+                  <option value="TX">TX</option>
+                  <option value="UT">UT</option>
+                  <option value="VT">VT</option>
+                  <option value="VA">VA</option>
+                  <option value="DC">DC</option>
+                  <option value="WA">WA</option>
+                  <option value="WV">WV</option>
+                  <option value="WI">WI</option>
+                  <option value="WY">WY</option>
+                </select>
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_zip">Zip *</label><br />
+                <input type="text" id="contact_zip" name="contact_zip" title="Zip Code" maxlength="5" required
+                  placeholder="xxxxx" pattern="^\d{5}$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_phone1_number">Business Phone *</label><br />
+                <input type="text" id="contact_phone1_number" name="contact_phone1_number" title="Phone Number"
+                  maxlength="10" required placeholder="xxxxxxxxxx" pattern="^\d{10}$" />
+              </li>
+              <li>
+                <label class="rpi_longlabel" for="contact_emailaddress1">Email Address *</label><br />
+                <input type="email" id="contact_emailaddress1" name="contact_emailaddress1" title="Email Address"
+                  required />
+              </li>
+              <div class="g-recaptcha" data-sitekey="6LemNyIaAAAAAPv_HvPXfhaATx1mtB4a9WcJwTjF"
+                data-callback="recaptcha_callback"></div>
+              <li><input onclick="submitFormToAPI(event)" type="submit" value="SUBMIT" disabled="true" class="button"></li>
+            </ul>
+          </form>
+        </div>
+		<!-- Form HTML End -->
+        <p></p>
+      </div>
+    </div>
+  </div>
+  <div class="productDescriptionLightbox">
+    <div class="productFlexWrapper">
+      <div class="productDescriptionContainer flex-container">
+        <div class="buttonHeader">
+          <button onclick="toggleProductDetails()">Close</button>
+        </div>
+        <div class="productImage">
+          <img src="" alt="Brochure Image" />
+        </div>
+        <div class="productContent">
+          <div class="descriptionContent">
+            <p class="productTitle">[Title]</p>
+            <p class="productDescription">[Description]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript"
+    src="https://mmcjsgcreative.blob.core.windows.net/jsfiles/Fulfillment/fulfillmentJS.js"></script>
+  <!--ADD: Client Init Function below-->
+  <!--The below script will be the same init script you have on your overall website, it just also needs to be within the iframe. You will need to add here -->
+  <script type="text/javascript">
+    rpiWebClient.init({
+      "clientId": "d1873b44-b93b-445f-abc8-2858dcf6cd62",
+      "serverUrl": "https://mmcjsgrpiapi.azurewebsites.net",
+      "enableLinkTracking": true
+    });
+  </script>
+  <!--ADD: Custom script to pass in session variable from the WIX parent into this iframe -->
+  <!-- you will add the below script here to handle the custom script to take the identifiers from the URL if they exist and pass it into the iframe for tracking -->
+  <script type="text/javascript">
+    // when a message is received from the page code 
+    window.onmessage = (event) => {
+      console.log('received from parent');
+      //alert('message received');
+      if (event.data) {
+        console.log("HTML Code Element received a message!");
+        console.log(event.data);
+        var receivedData = event.data;
+        if (receivedData.rpcid == 'undefined' || receivedData.rpcid == null || typeof receivedData.rpcid == "undefined") {
+          document.getElementById("rpiCID").value = null;// receivedData.rpcid; 
+        }
+        else {
+          document.getElementById("rpiCID").value = receivedData.rpcid;
+          rpiWebClient.pageParameters.cId = receivedData.rpcid;
+        }
+        if (receivedData.exid == 'undefined' || receivedData.exid == null || typeof receivedData.exid == "undefined") {
+          document.getElementById("rpiExID").value = null; //receivedData.exid; 
+        }
+        else {
+          document.getElementById("rpiExID").value = receivedData.exid;
+          rpiWebClient.pageParameters.exId = receivedData.exid;
+        }
+
+        if (receivedData.contactexternalidentifier != 'undefined' && receivedData.contactexternalidentifier != null && typeof receivedData.contactexternalidentifier != "undefined") {
+          console.log('we have a new visitor id' + receivedData.contactexternalidentifier);
+          document.getElementById("rpiVisitorID").value = receivedData.contactexternalidentifier;
+          rpiWebClient.visitor.profile.VisitorID = receivedData.contactexternalidentifier;
+        }
+
+
+
+        //if (receivedData.contactexternalidentifier != 'x') {
+        //rpiWebClient.visitor.profile.VisitorID =  receivedData.contactexternalidentifier ;
+        //document.getElementById("rpiVisitorID").value = receivedData.contactexternalidentifier ;
+        //alert(rpiWebClient.visitor.profile.VisitorID);
+        //} 
+      }
+    }
+
+    function init() {
+      //alert('init');
+      console.log('call parent');
+      window.parent.postMessage('ready', "*");
+    } // end init() 
+    window.onload = init;
+  </script>
+  <script type="text/javascript">rpiWebClient._setFormTracking()</script>
+  <!--You will need to add the below script to trigger the Form Start custom web event -->
+  <script>
+    var formId = 'FulfillmentWebForm'; //UPDATE! the name here has to be the same as the id in the form tag
+
+    var formStarted = false;
+    function formIsStarted() {
+      if (!formStarted) {
+        // track
+        rpiWebClient.sendMetric('FormStart', null, 'FulfillmentWebForm'); //UPDATE: make sure to update this form name here as this will be the detail for the form start tracking event
+        formStarted = true;
+      }
+    }
+
+    var elements = document.getElementById(formId).elements;
+    for (var i = 0, element; element = elements[i++];) {
+      element.oninput = function () {
+        formIsStarted();
+        console.log('oninput')
+      };
+    }
+
+
+  </script>
+</body>
+
+</html>

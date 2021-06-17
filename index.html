@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cart Testing</title>
+    <link rel="stylesheet" href="css/Cart.css" />
+	<script type="text/javascript">
+		/*Variables that can be changed*/
+		var clientPath = "CreggerCompany"; //Replace this with the folder name in https://www.mmcwebthing.com/Cart/
+		var subscriptionKey = "9ad3d0c556d74e5ba57190e6d2bf7413";
+		var clientID = "62D44305-D85F-4076-8477-8000854460D6";
+		var sourceClientIdentifier = "testclientidentifier"; //provided by data services
+		var catalogCode = "M-99380-395-9";
+		var sourcePackageCode = "testpackagecode"; //This will be the letter that goes with the order. 
+		var sourceOrderIdentifier = "81731b4b-a8bb-4bf1-abda-0dcde89acc0a"; //This needs to be a unique guid
+		var shippingCarrierIdentifier = "NULL";
+		var shippingMethodIdentifier = "NULL";
+		var currentDate = new Date();
+		var orderDetailsText = "+ See Product Details";
+		var addToCartButtonText = "Add to cart";
+
+		/*=====================================*/
+	</script>
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/cart.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            Cart.initJQuery();
+            Cart.currency = '$';
+        });
+    </script>
+</head>
+
+<body>
+	<div id="step-display">
+		
+	</div>
+    <div class="step-container" data-step="1">
+        <div class="fulfillment-wrapper">
+            <div class="fulfillment-header">
+                <div class="order-process-step">
+
+                </div>
+
+				<div class="how-to-order">
+					<!--<p>
+						<span class="subheader">How To Order</span>
+					</p>
+					<ol>
+						<li><span>Select a category to filter brochure type and click SEARCH (all categories are initially selected by default)</span></li>
+						<li><span>Select quantity of each brochure you would like to order and select “ADD TO CART"</span></li>
+						<li><span>Continue to CHECKOUT and enter your shipping information <b>(Reminder: all orders are free; you will not be charged for your order or for shipping)</b></span></li>
+					</ol>-->
+					<div class="search-container">
+						<button onclick="onSearchBarClicked(event)" class="search-bar"></button>
+						<button class="search-button">Search</button>
+						<div class="search-dropdown">
+							<div class="search-body">
+								<div class="search-options">
+									<div class="check-option"><input type="checkbox" value="Test" checked>Test</div>
+								</div>
+							</div>
+							<div class="search-footer">
+							</div>
+						</div>
+					</div>
+				</div>
+
+                <div class="checkout-container">
+                    <div class="cart-items">
+                        <p>Cart Items (<span class="cart-items-count">0</span>)</p> <button onclick="nextStep()"
+                            class="checkout-button">Checkout</a>
+                    </div>
+                </div>
+            </div>
+            <div class="fulfillment-container flex-container">
+
+            </div>
+			<div class="fulfillment-footer">
+				<div class="pagination-container">
+					<ul class="pagination-buttons">
+						
+					</ul>
+					<select class="items-per-page" onchange="onProductsPerPageChanged(this)">
+						<option value="10">10</option>
+						<option value="15">15</option>
+						<option value="20">20</option>
+						<option value="30">30</option>
+						<option value="50">50</option>
+					</select> <span class="products-per-page">products per page</span>
+				</div>
+				<div class="checkout-container">
+                    <div class="cart-items">
+                        <p>Cart Items (<span class="cart-items-count">0</span>)</p> <button onclick="nextStep()"
+                            class="checkout-button">Checkout</a>
+                    </div>
+                </div>
+			</div>
+        </div>
+    </div>
+
+    <!--- Add the form within the form-container divs -->
+    <div class="step-container" data-step="2" style="display:none;">
+		<div class="checkout-container back">
+            <button onclick="previousStep()" class="back-button">Back</a>        
+        </div>
+        <div class="checkout-flex-container flex-container">
+            <div class="form-container">
+				<p class="form-header">
+					<span class="subheader">SHIPPING INFORMATION</span><br>
+					Please provide your shipping information below. (* = Required)<br>
+					Items cannot be shipped outside the US and Canada.
+				</p>
+
+                <!-- Form HTML -->
+                <div class="rpiformdiv">
+                    <!--in the below form tag you will add the id= to be the same as the name, add the target="_parent" to the end of the tag-->
+                    <form class="rpi_contact_form" id="FulfillmentFormTesting" name="FulfillmentFormTesting"
+                        action="https://mmctrainingrpiapi.azurewebsites.net/api/FormData"
+                        onsubmit="formRequest('FulfillmentFormTesting')" method="post" target="_parent">
+                        <input type="hidden" id="rpiID" name="rpiID" title=""
+                            value="fc3dfa0d-b75b-4c9d-89d1-fa318dbb64d9" />
+                        <input type="hidden" id="rpiRedirect" name="rpiRedirect" title=""
+                            value="https://www.mmcgrowthsports.com/information-thank-you" />
+                        <input type="hidden" id="rpiFormID" name="rpiFormID" title="" value="FulfillmentFormTesting" />
+                        <input type="hidden" id="rpiEmail" name="rpiEmail" title="" value="contact~emailaddress1" />
+                        <input type="hidden" id="rpiCID" name="rpiCID" title="rpiCID" />
+                        <input type="hidden" id="rpiExID" name="rpiExID" title="rpiExID" />
+                        <input type="hidden" id="rpiTrKey" name="rpiTrKey" title=""
+                            value="1619d75d-be1d-4b79-bb89-d32fb29a4ebf" />
+                        <input type="hidden" id="rpiVisitorID" name="rpiVisitorID" title="rpiVisitorID" value="" />
+                        <input type="hidden" id="rpiDeviceID" name="rpiDeviceID" title="rpiDeviceID" value="" />
+                        <input type="hidden" id="rpiImpID" name="rpiImpID" title="rpiImpID" value="" />
+                        <input type="hidden" id="rpiCLID" name="rpiCLID" title="rpiCLID"
+                            value="15801013-abb7-4170-879b-819aedae3047" />
+                        <!-- You will need to add this hidden tag of rpiPagePublishID to account for when the visitor is not known, otherwise the data will not submit-->
+                        <input type="hidden" id="rpiPagePublishID" name="rpiPagePublishID" title="rpiPagePublishID"
+                            value="0" />
+                        <ul style="list-style: none;">
+                            <li>
+                                <h2>FormHeader</h2>
+                            </li>
+							<li>	
+								<div class="rpi_static">
+                                    <p>Here is my static html element on my form to show my FORM TITLE. This form
+                                        includes all the types of form elements from the RPI Webform designer. This is
+                                        to redirect you to an external WIX page on form submit.<br />
+                                        Note that this is the standard webform to be used for configuration testing and
+                                        referencing back for review. None of these questions are required as to note
+                                        require data to be overwritten for test records.</p>
+                                </div><br />
+							</li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_firstname">First Name</label><br />
+                                <input type="text" id="contact_firstname" name="contact_firstname" title="First Name"
+                                    maxlength="25" placeholder="Your First Name"
+                                    pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_lastname">Last Name</label><br />
+                                <input type="text" id="contact_lastname" name="contact_lastname" title="Last Name"
+                                    maxlength="35" placeholder="Your Last Name"
+                                    pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="company_companyname">Company Name</label><br />
+                                <input type="text" id="company_companyname" name="company_companyname"
+                                    title="Company Name" maxlength="100" placeholder="Company Name"
+                                    pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_jobtitle">Title</label><br />
+                                <input type="text" id="contact_jobtitle" name="contact_jobtitle" title="Job Title"
+                                    maxlength="60" placeholder="Your Job Title"
+                                    pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_phone1_number">Business Phone</label><br />
+                                <input type="text" id="contact_phone1_number" name="contact_phone1_number"
+                                    title="Phone Number" maxlength="10" placeholder="xxxxxxxxxx"
+                                    pattern="^\d{10}$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_emailaddress1">Email</label><br />
+                                <input type="email" id="contact_emailaddress1" name="contact_emailaddress1"
+                                    title="Email Address" />
+                            </li>
+								<div class="rpi_static">
+                                    <p style="font-weight:bold;">Please provide your address information below</p>
+                                </div><br />
+                            <li>
+                                
+                                <label class="rpi_longlabel" for="contact_address1">Street</label><br />
+                                <input type="text" id="contact_address1" name="contact_address1" title="Street"
+                                    maxlength="50" placeholder="Address" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_city">City</label><br />
+                                <input type="text" id="contact_city" name="contact_city" title="City" maxlength="35"
+                                    placeholder="City" pattern="^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_state">State</label><br />
+                                <select id="contact_state" name="contact_state" title="State">
+                                    <option value="" disabled selected>State</option>
+                                    <option value="AL">AL</option>
+                                    <option value="AK">AK</option>
+                                    <option value="AZ">AZ</option>
+                                    <option value="AR">AR</option>
+                                    <option value="CA">CA</option>
+                                    <option value="CO">CO</option>
+                                    <option value="CT">CT</option>
+                                    <option value="DE">DE</option>
+                                    <option value="FL">FL</option>
+                                    <option value="GA">GA</option>
+                                    <option value="HI">HI</option>
+                                    <option value="ID">ID</option>
+                                    <option value="IL">IL</option>
+                                    <option value="IN">IN</option>
+                                    <option value="IA">IA</option>
+                                    <option value="KS">KS</option>
+                                    <option value="KY">KY</option>
+                                    <option value="LA">LA</option>
+                                    <option value="ME">ME</option>
+                                    <option value="MD">MD</option>
+                                    <option value="MA">MA</option>
+                                    <option value="MI">MI</option>
+                                    <option value="MN">MN</option>
+                                    <option value="MS">MS</option>
+                                    <option value="MO">MO</option>
+                                    <option value="MT">MT</option>
+                                    <option value="NE">NE</option>
+                                    <option value="NV">NV</option>
+                                    <option value="NH">NH</option>
+                                    <option value="NJ">NJ</option>
+                                    <option value="NM">NM</option>
+                                    <option value="NY">NY</option>
+                                    <option value="NC">NC</option>
+                                    <option value="ND">ND</option>
+                                    <option value="OH">OH</option>
+                                    <option value="OK">OK</option>
+                                    <option value="OR">OR</option>
+                                    <option value="PA">PA</option>
+                                    <option value="RI">RI</option>
+                                    <option value="SC">SC</option>
+                                    <option value="SD">SD</option>
+                                    <option value="TN">TN</option>
+                                    <option value="TX">TX</option>
+                                    <option value="UT">UT</option>
+                                    <option value="VT">VT</option>
+                                    <option value="VA">VA</option>
+                                    <option value="DC">DC</option>
+                                    <option value="WA">WA</option>
+                                    <option value="WV">WV</option>
+                                    <option value="WI">WI</option>
+                                    <option value="WY">WY</option>
+                                </select>
+
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="contact_zip">Zip</label><br />
+                                <input type="text" id="contact_zip" name="contact_zip" title="Zip Code" maxlength="5"
+                                    placeholder="xxxxx" pattern="^\d{5}$|^$" />
+                            </li>
+                            <li>
+                                <label class="rpi_longlabel" for="qr_company_primarybusinesstype">What type of business
+                                    do you primarily do?</label><br />
+                                <input type="radio" id="qr_company_primarybusinesstype1"
+                                    name="qr_company_primarybusinesstype" title="Primary Business TYpe"
+                                    value="Consultation">Consultation</input><br>
+                                <input type="radio" id="qr_company_primarybusinesstype2"
+                                    name="qr_company_primarybusinesstype" title="Primary Business TYpe"
+                                    value="Surgery">Surgery</input><br>
+                                <input type="radio" id="qr_company_primarybusinesstype3"
+                                    name="qr_company_primarybusinesstype" title="Primary Business TYpe"
+                                    value="Contracting">Contracting</input><br>
+                                <input type="radio" id="qr_company_primarybusinesstype4"
+                                    name="qr_company_primarybusinesstype" title="Primary Business TYpe"
+                                    value="Retail">Retail</input><br>
+
+                            </li>
+                            <li class="last-form-field">
+                                <label class="rpi_longlabel" for="qr_company_secondarybusinesstype">What type of
+                                    business do you also do?</label><br />
+                                <select id="qr_company_secondarybusinesstype" name="qr_company_secondarybusinesstype"
+                                    title="Secondary Business Type">
+                                    <option value="" disabled selected>Secondary Business Type</option>
+                                    <option value="Consultation">Consultation</option>
+                                    <option value="Surgery">Surgery</option>
+                                    <option value="Contracting">Contracting</option>
+                                </select>
+
+                            </li>
+                            <!--UPDATE! In the div below add the google -->
+                            <div class="g-recaptcha" data-sitekey="6LemNyIaAAAAAPv_HvPXfhaATx1mtB4a9WcJwTjF"
+                                data-callback="recaptcha_callback"></div>
+                            <li>
+                                <!--UPDATE! You will need to update the submit button input tag to the below -->
+                                <input onclick="submitFormToAPI(event)" type="submit" value="SUBMIT ORDER" class="button">
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+                <p></p>
+
+                <!-- END OF RPI WEBFORM CODE -->
+            </div>
+            <div class="cart-wrapper">
+				<p class="cart-header">
+					<span class="subheader">YOUR CART</span><br>
+					Please review your cart items.
+				</p>
+                <div class="cart-result-container">
+                    <table class='cart-table'>
+                        <thead>
+                        </thead>
+                        <tbody class='cart-line-items'>
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
+                    </table>
+                    <p class='cart-is-empty'>Your cart is empty.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="productDescriptionLightbox">
+        <div class="productFlexWrapper">
+            <div class="productDescriptionContainer flex-container">
+                <div class="buttonHeader">
+                    <button onclick="toggleProductDetails()">Close</button>
+                </div>
+                <div class="productImage">
+                    <img src="" alt="Brochure Image" />
+                </div>
+                <div class="productContent">
+                    <div class="descriptionContent">
+                        <p class="productTitle">[Title]</p>
+                        <p class="productDescription">[Description]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/fulfillmentJS.js"></script>
+</body>
+
+</html>
